@@ -16,7 +16,19 @@ def img_to_str(image):
 
 # this function converts image from string to cv2-image format
 def str_to_img(s):
-    pass
+    lst = s.split()
+    x_chor = int(lst[1])
+    y_chor = int(lst[0])
+    img = cv2.imread("one_pix.jpg")
+    image = cv2.copyMakeBorder(img, 0, y_chor, 0, x_chor, cv2.BORDER_CONSTANT, value = (0,0,0))
+    lst = lst[2:]
+    for i in range(y_chor):
+        for j in range(x_chor):
+            b = int(lst[i*x_chor*3+j*3+0])
+            g = int(lst[i*x_chor*3+j*3+1])
+            r = int(lst[i*x_chor*3+j*3+2])
+            image[i][j] = (b,g,r)
+    return image
 
 # this function makes place under the picture and place informational text there
 def make_bottom_and_text(image, date, time, cam_number, direction, real_speed, allowed_speed, adress):
