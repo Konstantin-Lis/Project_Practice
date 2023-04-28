@@ -78,4 +78,4 @@ def checking_for_left(REAL_TIME, whole_data):
                 violation = deside(whole_data[i]["LIGHTS"])
                 if violation == 1:
                     fixate_violation(whole_data[i])
-            whole_data.pop(i)
+                whole_data.pop(i)
