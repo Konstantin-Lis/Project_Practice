@@ -1,46 +1,81 @@
-import cv2
-import json
+# Часть функций написаны с допущением, что список whole_data не пустой
+# При сборке системы воедино следует перед активацией функций check и checking_for_left убедиться в том, что whole_data не пуст
 
-# this function converts image from cv2-image to string format
-# first two numbers are size of image, other numbers after grouping by three wil be a pixels in Blue-Green-Red
-def img_to_str(image):
-    s = ''
-    s += str(image.shape[0]) + " "
-    s += str(image.shape[1]) + " "
-    for i in range(image.shape[0]):
-        for j in range(image.shape[1]):
-            for k in range(3):
-                s += str(image.item(i, j, k))
-                s += " "
-    return s
+whole_data = [
+    {"GRZ":"AA000A96", "LAST_TIME":"12:43:55", "DATE":"15.04.2023", "LIGHTS":[0,1,1,1,1,0,1]},
+    {"GRZ":"AA001A96", "LAST_TIME":"12:43:54", "DATE":"15.04.2023", "LIGHTS":[0,0,1,0,1,0,0,0,0,1]},
+    {"GRZ":"AA002A96", "LAST_TIME":"12:43:55", "DATE":"15.04.2023", "LIGHTS":[0,1,1]},
+    {"GRZ":"AA003A96", "LAST_TIME":"12:43:55", "DATE":"15.04.2023", "LIGHTS":[1,1,1,0,1]},
+    {"GRZ":"AA004A96", "LAST_TIME":"12:43:55", "DATE":"15.04.2023", "LIGHTS":[0,1,1,0,0,1]},
+    {"GRZ":"AA005A96", "LAST_TIME":"12:43:55", "DATE":"15.04.2023", "LIGHTS":[1,1,1,1,1,1,1]},
+    {"GRZ":"AA006A96", "LAST_TIME":"12:43:55", "DATE":"15.04.2023", "LIGHTS":[0]}
+]
+dct = {"GRZ":"AA000A96", "TIME":"12:43:56", "DATE":"15.04.2023", "LIGHTS":1}
+REAL_TIME = "12:43:56"
+REAL_DATE = "15.04.2023"
 
-# this function converts image from string to cv2-image format
-def str_to_img(s):
-    lst = s.split()
-    x_chor = int(lst[1])
-    y_chor = int(lst[0])
-    img = cv2.imread("one_pix.jpg")
-    image = cv2.copyMakeBorder(img, 0, y_chor, 0, x_chor, cv2.BORDER_CONSTANT, value = (0,0,0))
-    lst = lst[2:]
-    for i in range(y_chor):
-        for j in range(x_chor):
-            b = int(lst[i*x_chor*3+j*3+0])
-            g = int(lst[i*x_chor*3+j*3+1])
-            r = int(lst[i*x_chor*3+j*3+2])
-            image[i][j] = (b,g,r)
-    return image
+def deside(lst):
+    num = len(lst)
+    sum = 0
+    for i in lst:
+        sum += i
+    res = round(sum/num, 3)
+    if res > 0.5:
+        return 0
+    else:
+        return 1
 
-# this function makes place under the picture and place informational text there
-def make_bottom_and_text(image, date, time, cam_number, direction, real_speed, allowed_speed, adress):
-    new_img = cv2.copyMakeBorder(image, 0, 100, 0, 0, cv2.BORDER_CONSTANT, value = (0,0,0))
-    first_str = "Дата- " + date + "  Время- " + time + "  Скорость- " + real_speed + "  Разрешенная скорость- " + allowed_speed
-    second_str = "Прибор №- " + cam_number + "  Направление контроля- " + direction + "  Адрес- "
-    third_str = adress
-    cv2.putText(new_img, first_str, (image.shape[0]+10, 5), cv2.FONT_HERSHEY_SIMPLEX, 8, (255, 255, 255))
-    cv2.putText(new_img, second_str, (image.shape[0]+10, 5), cv2.FONT_HERSHEY_SIMPLEX, 8, (255, 255, 255))
-    cv2.putText(new_img, third_str, (image.shape[0]+10, 5), cv2.FONT_HERSHEY_SIMPLEX, 8, (255, 255, 255))
-    return new_img
-
-# this function read 1 tuple from .json file and convert it into dict format
-def read_json(json_file):
+# Не забыть когда-нибудь прописать эту функцию
+def fixate_violation(dct):
     pass
+
+def check(dct, whole_data):
+    for i in range(len(whole_data)):
+        if whole_data[i]["GRZ"]==dct["GRZ"]:
+            return i
+        else:
+            return -1
+
+# Данная функция должна активироваться только если функция check вернула не -1
+def new_data(dct, whole_data):
+    place = check(dct, whole_data)
+    whole_data[place]["LIGHTS"].append(dct["LIGHTS"])
+    whole_data[place]["LAST_TIME"] = dct["TIME"]
+    whole_data[place]["DATE"] = dct["DATE"]
+
+# Данная функция должна активироваться только если функция check вернула -1
+def new_car(dct, whole_data):
+    new_dct = dct
+    new_dct["LIGHTS"] = [dct["LIGHTS"]]
+    whole_data.append(new_dct)
+
+# В данной функции мы прогоняем все элементы нашего списка по циклу
+# Если какого-то из автомобилей не было больше 10-ти секунд, то определяем, присутствовало ли нарушение
+# Если присутствовало, то выписываем штраф
+# (функция выписки штрафа не реализована)
+# В самом конце удаляем данные об автомобиле из локальной базы
+def checking_for_left(REAL_TIME, whole_data):
+    timestamp0 = REAL_TIME.split(":")
+    timestamp = []
+    for i in range(3):
+        timestamp.append(int(timestamp0[i]))
+    for i in range(len(whole_data)):
+        if whole_data[i]["LAST_TIME"] != REAL_TIME:
+            last_time0 = whole_data[i]["LAST_TIME"].split(":")
+            last_time = []
+            res = ""
+            for j in range(3):
+                last_time.append(int(last_time0[j]))
+            if last_time[2]+10 < timestamp[2]:
+                res = "ABSENT"
+            elif last_time[2] > timestamp[2]:
+                if last_time[2]+10 < timestamp[2]+60:
+                    res = "ABSENT"
+            else:
+                res = "PRESENT"
+
+            if res == "ABSENT":
+                violation = deside(whole_data[i]["LIGHTS"])
+                if violation == 1:
+                    fixate_violation(whole_data[i])
+            whole_data.pop(i)
