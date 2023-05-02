@@ -1,6 +1,6 @@
 {
 	"detection1": {
-		"photo_path": "/src/photo1.jpg",
+		"photo_path": "src/photo1.jpg",
 		"license_plate": "КРН155",
 		"lights_on": true,
 		"timestamp": "2023-04-12T10:00:00Z",
@@ -8,10 +8,18 @@
 		"address": "Центральный проспект. Д.1, г.Зеленоград, г.Москва"
 	},
 	"detection2": {
-		"photo_path": "/src/photo2.jpg",
+		"photo_path": "src/photo2.jpg",
 		"license_plate": "УСЬ748",
 		"lights_on": false,
 		"timestamp": "2023-04-12T10:00:00Z",
+		"coordinates": "55.998768, 37.204968",
+		"address": "Центральный проспект. Д.1, г.Зеленоград, г.Москва"
+	},
+	"detection3": {
+		"photo_path": "src/photo1.jpg",
+		"license_plate": "КРН155",
+		"lights_on": false,
+		"timestamp": "2023-04-12T10:00:01Z",
 		"coordinates": "55.998768, 37.204968",
 		"address": "Центральный проспект. Д.1, г.Зеленоград, г.Москва"
 	}
