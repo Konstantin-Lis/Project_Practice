@@ -13,4 +13,4 @@
 
 3. Установить библиотеки
 
-`pip install pika`
+`pip install -r requirements.txt`
