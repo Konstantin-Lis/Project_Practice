@@ -11,9 +11,9 @@ from Project_Practice.create_picture import create_detection_image
 
 def callback(ch, method, properties, body):
     detection = json.loads(body)
-    create_detection_image(detection)
     license_plate = detection['license_plate']
     print("Received license_plate:", license_plate)
+    create_detection_image(detection)
 
 
 ''' устанавливается соединение с локальным экземпляром RabbitMQ, 
