@@ -16,8 +16,8 @@ with open('сar_data.json', mode='r', encoding='utf-8') as f:
         detection = json.loads(line)
         message = json.dumps(detection, ensure_ascii=False)
         channel.basic_publish(exchange='', routing_key='detections', body=message)
-        print("Sent message:", message)
-        time.sleep(2)
+        print("Сообщение отправлено:", message)
+        time.sleep(1)
 
 '''перебор всех ключей в словаре detections и отправка каждого значения в очередь detections. 
 Затем выводится сообщение о том, что сообщение было отправлено'''

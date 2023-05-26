@@ -5,9 +5,13 @@ import cv2
 import numpy as np
 
 
+import cv2
+import numpy as np
+import random
+
 def create_detection_image(detection):
     # get car image
-    car_img = cv2.imread(detection['photo_path'])
+    car_img = cv2.imread(detection['PHOTO_PATH'])
     # resize image
     car_img = cv2.resize(car_img, (700, 500), interpolation=cv2.INTER_AREA)
 
@@ -20,19 +24,18 @@ def create_detection_image(detection):
 
     # add info text about car
     font = cv2.FONT_HERSHEY_COMPLEX
-    cv2.putText(info_img, f"Местоположение: {detection['coordinates']}", (10, int(info_img_height * 0.2)), font,
+    cv2.putText(info_img, f"Местоположение: {detection['COORDINATES']}", (10, int(info_img_height * 0.2)), font,
                 font_scale, (255, 255, 255), 1)
-    cv2.putText(info_img, f"ГРЗ: {detection['license_plate']}", (10, int(info_img_height * 0.4)), font, font_scale,
+    cv2.putText(info_img, f"ГРЗ: {detection['GRZ']}", (10, int(info_img_height * 0.4)), font, font_scale,
                 (255, 255, 255), 1)
-    cv2.putText(info_img, f"Состояние фар: {detection['lights_on']}", (10, int(info_img_height * 0.6)), font,
+    cv2.putText(info_img, f"Состояние фар: фары выключены", (10, int(info_img_height * 0.6)), font,
                 font_scale, (255, 255, 255), 1)
-    cv2.putText(info_img, f"Дата и время: {detection['timestamp']}", (10, int(info_img_height * 0.8)), font, font_scale,
+    cv2.putText(info_img, f"Время: {detection['LAST_TIME']}", (10, int(info_img_height * 0.8)), font, font_scale,
                 (255, 255, 255), 1)
     # concatenate car and info images
     new_img = np.concatenate((car_img, info_img), axis=0)
     # сохранение картинки, пока что её название - это случайное число, потом нужно поменять
     random_number = random.randint(1, 1000)
-    filename = f".created_pictures/{detection['license_plate'][-3:]}_{random_number}.jpg"
+    filename = f".created_pictures/{detection['GRZ'][-3:]}_{random_number}.jpg"
     cv2.imwrite(filename, new_img)
-
 

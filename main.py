@@ -1,42 +1,58 @@
 # Часть функций написаны с допущением, что список whole_data не пустой
 # При сборке системы воедино следует перед активацией функций check и checking_for_left убедиться в том, что whole_data не пуст
+from Project_Practice import create_picture
+from Project_Practice.create_picture import create_detection_image
 
 global whole_data
 whole_data = [
-    {"GRZ": "AA000A96", "LAST_TIME": "12:43:55", "LIGHTS": [0, 1, 1, 1, 1, 0, 1]},
-    {"GRZ": "AA001A96", "LAST_TIME": "12:43:54", "LIGHTS": [0, 0, 1, 0, 1, 0, 0, 0, 0, 1]},
-    {"GRZ": "AA002A96", "LAST_TIME": "12:43:55", "LIGHTS": [0, 1, 1]},
-    {"GRZ": "AA003A96", "LAST_TIME": "12:43:55", "LIGHTS": [1, 1, 1, 0, 1]},
-    {"GRZ": "AA004A96", "LAST_TIME": "12:43:55", "LIGHTS": [0, 1, 1, 0, 0, 1]},
-    {"GRZ": "AA005A96", "LAST_TIME": "12:43:55", "LIGHTS": [1, 1, 1, 1, 1, 1, 1]},
-    {"GRZ": "AA006A96", "LAST_TIME": "12:43:55", "LIGHTS": [0]}
+    {"GRZ": "К155РН96", "LAST_TIME": "12:43:55", "LIGHTS": [0, 1, 1, 1, 1, 0, 1], "COORDINATES": "55.998768, 37.204968",
+     "PHOTO_PATH": "src/photo1.jpg"},
+    {"GRZ": "Р444КН96", "LAST_TIME": "12:43:55", "LIGHTS": [0, 0, 0, 0, 0, 0, 1],
+     "COORDINATES": "55.998768, 37.204968", "PHOTO_PATH": "src/photo1.jpg"},
+    {"GRZ": "А885ФР96", "LAST_TIME": "12:43:54", "LIGHTS": [0, 0, 1, 0, 1, 0, 0, 0, 0, 1],
+     "COORDINATES": "55.998768, 37.204968", "PHOTO_PATH": "src/photo1.jpg"},
+    {"GRZ": "А995ФФ96", "LAST_TIME": "12:43:55", "LIGHTS": [0, 1, 1], "COORDINATES": "55.998768, 37.204968",
+     "PHOTO_PATH": "src/photo1.jpg"},
+    {"GRZ": "А456ФН96", "LAST_TIME": "12:43:55", "LIGHTS": [1, 1, 1, 0, 1], "COORDINATES": "55.998768, 37.204968",
+     "PHOTO_PATH": "src/photo1.jpg"},
+    {"GRZ": "А456ФА96", "LAST_TIME": "12:43:55", "LIGHTS": [0, 1, 1, 0, 0, 1], "COORDINATES": "55.998768, 37.204968",
+     "PHOTO_PATH": "src/photo3.jpg"},
+    {"GRZ": "A155A96", "LAST_TIME": "12:43:55", "LIGHTS": [1, 1, 1, 1, 1, 1, 1], "COORDINATES": "55.998768, 37.204968",
+     "PHOTO_PATH": "src/photo2.jpg"}
 ]
 
-dct = {"photo_path": "src/photo3.jpg", "license_plate": "АБВ654", "lights_on": True, "timestamp": "2023-04-12T10:00:15Z", "coordinates": "55.998768, 37.204968", "address": "Центральный проспект. Д.1, г.Зеленоград, г.Москва"}
+dct = {"PHOTO_PATH": "src/photo3.jpg", "license_plate": "АБВ654", "lights_on": False,
+       "timestamp": "2023-04-12T10:00:15Z", "coordinates": "55.998768, 37.204968",
+       "address": "Центральный проспект. Д.1, г.Зеленоград, г.Москва"}
 REAL_TIME = "12:43:56"
 REAL_DATE = "15.04.2023"
+
 
 def deside(lst):
     num = len(lst)
     sum = 0
     for i in lst:
         sum += i
-    res = round(sum/num, 3)
+    res = round(sum / num, 3)
     if res > 0.5:
         return 0
     else:
         return 1
 
+
 # Функция выписки штрафа
 def fixate_violation(dct):
-    pass
+    print("Штраф для номера:", dct["GRZ"])
+    create_detection_image(dct)
+
 
 def check(dct):
     for i in range(len(whole_data)):
-        if whole_data[i]["GRZ"]==dct["license_plate"]:
+        if whole_data[i]["GRZ"] == dct["license_plate"]:
             return i
         else:
             return -1
+
 
 # Данная функция должна активироваться только если функция check вернула не -1
 def new_data(dct):
@@ -47,6 +63,7 @@ def new_data(dct):
     else:
         whole_data[place]["LIGHTS"].append(0)
     whole_data[place]["LAST_TIME"] = dct["timestamp"].split('T')[1][:-1]
+
 
 # Данная функция должна активироваться только если функция check вернула -1
 def new_car(dct):
@@ -59,6 +76,7 @@ def new_car(dct):
     else:
         new_dct["LIGHTS"].append(0)
     whole_data.append(new_dct)
+
 
 # В данной функции мы прогоняем все элементы нашего списка по циклу
 # Если какого-то из автомобилей не было больше 10-ти секунд, то определяем, присутствовало ли нарушение
@@ -78,10 +96,10 @@ def checking_for_left(REAL_TIME):
             last_time = []
             for j in range(3):
                 last_time.append(int(last_time0[j]))
-            if last_time[2]+10 < timestamp[2]:
+            if last_time[2] + 10 < timestamp[2]:
                 absent_cars.append(i)
             elif last_time[2] > timestamp[2]:
-                if last_time[2]+10 < timestamp[2]+60:
+                if last_time[2] + 10 < timestamp[2] + 60:
                     absent_cars.append(i)
 
     for i in absent_cars:
@@ -90,3 +108,4 @@ def checking_for_left(REAL_TIME):
             fixate_violation(whole_data[i])
     for i in absent_cars:
         whole_data.pop(i)
+
