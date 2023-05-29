@@ -36,6 +36,6 @@ def create_detection_image(detection):
     new_img = np.concatenate((car_img, info_img), axis=0)
     # сохранение картинки, пока что её название - это случайное число, потом нужно поменять
     random_number = random.randint(1, 1000)
-    filename = f".created_pictures/{detection['GRZ'][-3:]}_{random_number}.jpg"
+    filename = f".created_pictures/{detection['GRZ'][1:4]}.jpg"
     cv2.imwrite(filename, new_img)
 
